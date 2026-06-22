@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Almacén V&J · Acceso pendiente</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body style="padding-bottom:0;">
+
+<div class="pending-wrap">
+  <div class="pending-card">
+    <div class="ic" id="pIcon">⏳</div>
+    <h2 id="pTitle">Tu acceso está pendiente</h2>
+    <p id="pText">Tu solicitud fue enviada correctamente. Un administrador debe aprobar tu cuenta antes de que puedas ingresar al sistema. Esta página se actualizará automáticamente apenas seas aprobado.</p>
+    <button class="btn btn-outline" onclick="logout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script>
+auth.onAuthStateChanged(user=>{
+  if(!user){ window.location.href = 'index.html'; return; }
+  db.collection('users').doc(user.uid).onSnapshot(snap=>{
+    if(!snap.exists) return;
+    const status = snap.data().status;
+    if(status === 'active'){
+      window.location.href = 'dashboard.html';
+    } else if(status === 'rejected'){
+      document.getElementById('pIcon').textContent = '🚫';
+      document.getElementById('pTitle').textContent = 'Acceso no autorizado';
+      document.getElementById('pText').textContent = 'Tu solicitud de acceso fue rechazada por el administrador. Si crees que esto es un error, contáctalo directamente.';
+    }
+  });
+});
+</script>
+</body>
+</html>
