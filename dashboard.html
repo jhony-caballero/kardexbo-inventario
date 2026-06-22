@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Almacén V&J · Dashboard</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- SIDEBAR DESKTOP -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">VJ</div>
+    <div class="brand-text">
+      <span class="t1 brand-name">KardexBot</span>
+      <span class="t2">V&amp;J Electronics</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" data-page="dashboard"><span class="ic">📊</span>Dashboard</a>
+    <a href="inventario.html" data-page="inventario"><span class="ic">📦</span>Inventario</a>
+    <a href="movimientos.html" data-page="movimientos"><span class="ic">🔄</span>Movimientos</a>
+    <a href="ajustes.html" data-page="ajustes"><span class="ic">⚙️</span>Ajustes</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user user-chip"></div>
+    <a onclick="logout()"><span class="ic">⏻</span>Cerrar sesión</a>
+  </div>
+</aside>
+
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">VJ</div>
+    <div class="brand-text">
+      <span class="t1 brand-name">Almacén V&J</span>
+      <span class="t2">Dashboard</span>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span class="user-chip"></span>
+    <button class="icon-btn" onclick="logout()" title="Cerrar sesión">⏻</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="alertBanner"></div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="num" id="statProducts">—</div>
+      <div class="lbl">Productos</div>
+    </div>
+    <div class="stat-card alert">
+      <div class="num" id="statLow">—</div>
+      <div class="lbl">Stock bajo</div>
+    </div>
+    <div class="stat-card">
+      <div class="num" id="statValue">—</div>
+      <div class="lbl">Valor stock</div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Entradas vs. salidas</h3>
+    <div class="chart-sub">Unidades movidas en los últimos 6 meses</div>
+    <div class="chart-wrap"><canvas id="chartMovs"></canvas></div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Ventas mensuales</h3>
+    <div class="chart-sub">Ingresos por ventas (S/.) — últimos 6 meses</div>
+    <div class="chart-wrap"><canvas id="chartSales"></canvas></div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Inventario por categoría</h3>
+    <div class="chart-sub">Distribución actual del stock</div>
+    <div class="chart-wrap small"><canvas id="chartCategory"></canvas></div>
+  </div>
+
+  <div class="section-card" id="lowStockSection" style="display:none;">
+    <h3>⚠️ Productos con stock bajo</h3>
+    <div class="section-sub">Igual o por debajo del mínimo configurado</div>
+    <div id="lowStockList"></div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" data-page="dashboard"><span class="ic">📊</span>Dashboard</a>
+  <a href="inventario.html" data-page="inventario"><span class="ic">📦</span>Inventario</a>
+  <a href="movimientos.html" data-page="movimientos"><span class="ic">🔄</span>Movimientos</a>
+  <a href="ajustes.html" data-page="ajustes"><span class="ic">⚙️</span>Ajustes</a>
+</nav>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Almacén V&J · Inventario</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- SIDEBAR DESKTOP -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">VJ</div>
+    <div class="brand-text">
+      <span class="t1 brand-name">KardexBot</span>
+      <span class="t2">V&amp;J Electronics</span>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" data-page="dashboard"><span class="ic">📊</span>Dashboard</a>
+    <a href="inventario.html" data-page="inventario"><span class="ic">📦</span>Inventario</a>
+    <a href="movimientos.html" data-page="movimientos"><span class="ic">🔄</span>Movimientos</a>
+    <a href="ajustes.html" data-page="ajustes"><span class="ic">⚙️</span>Ajustes</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user user-chip"></div>
+    <a onclick="logout()"><span class="ic">⏻</span>Cerrar sesión</a>
+  </div>
+</aside>
+
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">VJ</div>
+    <div class="brand-text">
+      <span class="t1 brand-name">Almacén V&J</span>
+      <span class="t2">Inventario</span>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <span class="user-chip"></span>
+    <button class="icon-btn" onclick="logout()" title="Cerrar sesión">⏻</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="searchbar">
+    <input type="text" id="searchInput" placeholder="Buscar por nombre, código o característica...">
+  </div>
+  <div class="chip-row" id="categoryChips"></div>
+  <div class="chip-row">
+    <button class="chip" id="chipLowStock">⚠️ Solo stock bajo</button>
+  </div>
+
+  <div id="productList"></div>
+  <div class="loader" id="loader"><div class="spinner"></div> Cargando productos...</div>
+</div>
+
+<button class="fab" onclick="openProductModal()">+</button>
+
+<nav class="bottom-nav">
+  <a href="dashboard.html" data-page="dashboard"><span class="ic">📊</span>Dashboard</a>
+  <a href="inventario.html" data-page="inventario"><span class="ic">📦</span>Inventario</a>
+  <a href="movimientos.html" data-page="movimientos"><span class="ic">🔄</span>Movimientos</a>
+  <a href="ajustes.html" data-page="ajustes"><span class="ic">⚙️</span>Ajustes</a>
+</nav>
+
+<!-- ===== MODAL: Agregar / Editar producto ===== -->
+<div class="modal-overlay" id="modalProduct">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalProductTitle">Nuevo producto</h3>
+      <button class="modal-close" onclick="closeModal('modalProduct')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="formProduct">
+        <input type="hidden" id="pId">
+
+        <div class="field">
+          <label>Foto del producto</label>
+          <div class="photo-upload">
+            <div class="photo-preview" id="photoPreview">📷</div>
+            <div>
+              <input type="file" id="photoInput" accept="image/*" style="display:none;">
+              <button type="button" class="btn-upload" onclick="document.getElementById('photoInput').click()">Elegir foto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Código</label>
+            <input type="text" id="pCode" placeholder="Ej. REP-0012">
+          </div>
+          <div class="field">
+            <label>Categoría</label>
+            <select id="pCategory"></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nombre del producto</label>
+          <input type="text" id="pName" required placeholder="Ej. Lente de enfoque 12.7mm">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Medida / unidad</label>
+            <input type="text" id="pUnit" list="unitOptions" placeholder="Ej. unidad, metro, kit">
+            <datalist id="unitOptions">
+              <option value="unidad"><option value="metro"><option value="kit">
+              <option value="rollo"><option value="litro"><option value="par">
+            </datalist>
+          </div>
+          <div class="field">
+            <label>Stock mínimo (alerta)</label>
+            <input type="number" id="pMinStock" min="0" value="0">
+          </div>
+        </div>
+
+        <div class="field" id="pQuantityField">
+          <label>Stock inicial</label>
+          <input type="number" id="pQuantity" min="0" value="0">
+          <div class="field-hint">Se registrará como movimiento de "Inventario inicial". Después, el stock solo cambia con movimientos.</div>
+        </div>
+
+        <div class="field">
+          <label>Máquinas / equipos relacionados</label>
+          <div class="chip-select" id="machineChips"></div>
+        </div>
+
+        <div class="field">
+          <label>Características</label>
+          <input type="text" id="pCharacteristics" placeholder="Ej. 24V · 5A · rosca M6">
+        </div>
+
+        <div class="field">
+          <label>Descripción</label>
+          <textarea id="pDescription" placeholder="Notas técnicas, compatibilidad, observaciones..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Precio de compra (referencia)</label>
+          <div class="price-box">
+            <div class="currency-toggle">
+              <button type="button" class="active" id="pBtnPEN" onclick="setProductCurrency('PEN')">Soles (S/.)</button>
+              <button type="button" id="pBtnUSD" onclick="setProductCurrency('USD')">Dólares ($)</button>
+            </div>
+            <input type="number" id="pPurchasePrice" min="0" step="0.01" placeholder="0.00" oninput="updateProductConversion()">
+            <div class="tc-row">
+              Tipo de cambio del día:
+              <input type="number" id="pExchangeRate" value="3.75" step="0.01" oninput="updateProductConversion()">
+            </div>
+            <div class="field-hint price" id="pConversionHint">≈ $0.00 USD</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn btn-outline" id="btnDeleteProduct" style="display:none;" onclick="deleteProduct()">Eliminar</button>
+          <button type="submit" class="btn btn-primary">Guardar producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/common.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/inventario.js"></script>
+</body>
+</html>
