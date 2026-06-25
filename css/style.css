@@ -486,14 +486,12 @@ input,select,textarea{font-family:var(--font-body);}
    NAVEGACIÓN DESKTOP — barra lateral izquierda
    Solo visible en pantallas >= 760px
    ===================================================== */
+
+/* oculta en móvil por defecto */
+.sidebar{ display:none; }
+
 @media (min-width:760px){
 
-  .app-layout{
-    display:flex;
-    min-height:100vh;
-  }
-
-  /* sidebar */
   .sidebar{
     width:220px;
     flex-shrink:0;
